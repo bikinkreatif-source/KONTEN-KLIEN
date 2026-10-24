@@ -99,6 +99,8 @@ Konten produksi dan aset besar diarahkan melalui tautan Google Drive. Aplikasi h
 
 ## API integrasi
 
+Panduan lengkap endpoint, parameter filter, pagination, bentuk respons, dan batas akses tersedia di [`docs/API.md`](docs/API.md).
+
 REST API tersedia di `https://ruangkonten.web.id/api`. Semua endpoint selain penerbitan token membutuhkan HTTPS dan header `Authorization: Bearer <access_token>`. Token berlaku 30 hari, hanya nilai hash yang disimpan, dan token asli hanya dikirim sekali saat diterbitkan. Cabut token aktif dengan `DELETE /api/auth/token`.
 
 ### Menerbitkan token
