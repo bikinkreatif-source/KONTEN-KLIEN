@@ -86,8 +86,8 @@ class ContentController extends Controller
         $client = isset($data['client_id']) ? Client::findOrFail($data['client_id']) : $content->client;
         $this->authorizeClient($request->user(), $client);
         $data['client_id'] = $client->id;
-        $this->validateDateInPlan($data, $client);
-        $this->validateAssignee($data['assignee_id'] ?? null, $client);
+        $this->validateDateInPlan($data, $client, $content);
+        $this->validateAssignee($data['assignee_id'] ?? $content->assignee_id, $client);
 
         $oldStatus = $content->status;
         $content->update($data);
@@ -139,9 +139,9 @@ class ContentController extends Controller
         ]);
     }
 
-    private function validateDateInPlan(array $data, Client $client): void
+    private function validateDateInPlan(array $data, Client $client, ?Content $content = null): void
     {
-        $date = $data['publish_date'] ?? null;
+        $date = $data['publish_date'] ?? $content?->publish_date?->format('Y-m-d');
         if ($date && ($date < $client->start_date->format('Y-m-d') || $date > $client->end_date->format('Y-m-d'))) {
             abort(422, 'Tanggal posting harus berada di dalam periode planner klien.');
         }
