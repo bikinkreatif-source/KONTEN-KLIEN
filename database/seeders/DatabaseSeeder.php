@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Client;
 use App\Models\Content;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,8 +17,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         if (! User::where('role', 'pm')->exists()) {
-            $adminEmail = env('ADMIN_EMAIL', app()->environment('local') ? 'admin@bikinkreatif.local' : null);
-            $adminPassword = env('ADMIN_PASSWORD', app()->environment('local') ? 'GantiPassword123!' : null);
+            $adminEmail = env('ADMIN_EMAIL');
+            $adminPassword = env('ADMIN_PASSWORD');
 
             if (blank($adminEmail) || blank($adminPassword)) {
                 throw new \RuntimeException('Set ADMIN_EMAIL dan ADMIN_PASSWORD sebelum membuat akun PM pertama.');
@@ -57,7 +58,7 @@ class DatabaseSeeder extends Seeder
             ] as [$job,$email]) {
                 $demoTeam[$job] = User::firstOrCreate(['email'=>$email], [
                     'name' => $job, 'role' => 'team', 'division' => $job,
-                    'password' => Hash::make(env('DEMO_TEAM_PASSWORD', 'GantiPassword123!')),
+                    'password' => Hash::make(env('DEMO_TEAM_PASSWORD', Str::random(48))),
                 ]);
             }
             $projectManager = User::where('role','pm')->first();

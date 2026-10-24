@@ -77,7 +77,7 @@ composer install
 cp .env.example .env
 ```
 
-Untuk development, ubah `.env` lokal ke `APP_ENV=local`, `APP_DEBUG=true`, `APP_URL=http://127.0.0.1:8000`, `DB_CONNECTION=sqlite`, dan isi `ADMIN_EMAIL` / `ADMIN_PASSWORD`. Buat file `database/database.sqlite`, lalu jalankan:
+Untuk development, ubah `.env` lokal ke `APP_ENV=local`, `APP_DEBUG=true`, `APP_URL=http://127.0.0.1:8000`, `DB_CONNECTION=sqlite`, dan isi `ADMIN_EMAIL` / `ADMIN_PASSWORD`. Isi `DEMO_TEAM_PASSWORD` bila Anda ingin login ke akun demo tim. Buat file `database/database.sqlite`, lalu jalankan:
 
 ```sh
 php artisan key:generate
