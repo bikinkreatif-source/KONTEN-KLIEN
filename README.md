@@ -96,3 +96,59 @@ Data klien, konten contoh, dan akun demo tim hanya dibuat oleh seeder pada envir
 - Dashboard khusus PM, panduan sesuai peran, dan tampilan responsif.
 
 Konten produksi dan aset besar diarahkan melalui tautan Google Drive. Aplikasi hanya menyimpan logo klien.
+
+## API integrasi
+
+REST API tersedia di `https://ruangkonten.web.id/api`. Semua endpoint selain penerbitan token membutuhkan HTTPS dan header `Authorization: Bearer <access_token>`. Token berlaku 30 hari, hanya nilai hash yang disimpan, dan token asli hanya dikirim sekali saat diterbitkan. Cabut token aktif dengan `DELETE /api/auth/token`.
+
+### Menerbitkan token
+
+Kirim kredensial akun aplikasi melalui koneksi HTTPS. Gunakan akun integrasi khusus dengan hak akses sekecil mungkin.
+
+```sh
+curl -X POST https://ruangkonten.web.id/api/auth/token \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"integrasi@contoh.id","password":"GANTI_DENGAN_PASSWORD","name":"Asisten konten"}'
+```
+
+Simpan nilai `access_token` dengan aman. Jangan masukkan token ke source code publik, log, atau browser yang bisa diakses umum.
+
+### Endpoint
+
+| Method | Path | Fungsi |
+| --- | --- | --- |
+| `GET` | `/api/clients` | Daftar klien yang boleh diakses akun |
+| `GET` | `/api/contents` | Daftar konten; filter opsional `client_id`, `status`, `from`, `to`, `assigned_to_me` |
+| `GET` | `/api/contents/{id}` | Detail konten, klien, PIC, dan riwayat status |
+| `POST` | `/api/contents` | Membuat konten untuk PM atau tim |
+| `PUT` / `PATCH` | `/api/contents/{id}` | Memperbarui konten untuk PM atau tim |
+| `DELETE` | `/api/contents/{id}` | Menghapus konten (PM saja) |
+| `DELETE` | `/api/auth/token` | Mencabut token yang digunakan |
+
+Contoh membuat konten:
+
+```json
+{
+  "client_id": 1,
+  "title": "Tips memilih rumah pertama",
+  "type": "Carousel",
+  "publish_date": "2026-11-02",
+  "publish_time": "10:00",
+  "status": "Ide",
+  "pillar": "Edukasi",
+  "brief": "Bahas tiga hal yang perlu dicek pembeli rumah pertama.",
+  "caption": "Sedang mencari rumah pertama? ...",
+  "reference_url": "https://example.com/referensi",
+  "drive_url": "https://drive.google.com/drive/folders/CONTOH"
+}
+```
+
+`publish_date` wajib berada dalam periode aktif klien. Format status: `Ide`, `Dalam proses`, `Menunggu review`, `Menunggu persetujuan klien`, `Perlu revisi`, `Disetujui`, `Terjadwal`, atau `Tayang`. Akun tim hanya melihat klien yang ditugaskan kepadanya, akun klien hanya dapat membaca kontennya sendiri, dan Project Manager dapat mengakses semua klien. Akun klien tidak dapat membuat, mengubah, atau menghapus konten.
+
+Contoh mengambil konten yang ditugaskan kepada akun:
+
+```sh
+curl 'https://ruangkonten.web.id/api/contents?assigned_to_me=1&from=2026-11-01&to=2026-11-30' \
+  -H 'Authorization: Bearer TOKEN_ANDA' \
+  -H 'Accept: application/json'
+```

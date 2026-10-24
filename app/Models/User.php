@@ -52,4 +52,5 @@ class User extends Authenticatable
 
     public function client() { return $this->belongsTo(Client::class); }
     public function clientWorkspaces() { return $this->belongsToMany(Client::class, 'client_team')->withPivot('assigned_by')->withTimestamps(); }
+    public function apiTokens() { return $this->hasMany(ApiToken::class); }
 }
